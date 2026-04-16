@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Тени Луны | Эос</title>
+    <!-- Шрифты: Cormorant Garamond (заголовки) + Inter (текст) - 100% кириллица -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Netlify CMS (будет активирован после деплоя) -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #0a0406;
+            background-image: radial-gradient(circle at 30% 10%, #1f0a12 0%, #030101 100%);
+            color: #e8d8d8;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+        h1, h2, h3, .logo, .menu-panel a, .ghost-moon {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        /* Хедер */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            border-bottom: 1px solid #2a1018;
+            background: rgba(8, 2, 4, 0.9);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            color: #c84868;
+            font-size: 1.9rem;
+            font-weight: 700;
+            text-shadow: 0 0 12px #801830;
+        }
+        .menu-btn {
+            background: none;
+            border: 1px solid #502030;
+            color: #d0a0a8;
+            font-size: 1.4rem;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            line-height: 1.3;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+        .menu-panel {
+            display: none;
+            background: #0a0204;
+            border-bottom: 1px solid #401820;
+            padding: 8px 0;
+            flex-direction: column;
+            text-align: center;
+        }
+        .menu-panel a {
+            color: #d0a8b0;
+            text-decoration: none;
+            font-size: 1.5rem;
+            padding: 14px;
+            letter-spacing: 3px;
+            border-bottom: 1px solid #1a080e;
+            cursor: pointer;
+            font-weight: 400;
+        }
+        .menu-panel a:active { background: #1a080e; }
+        
+        /* Страницы */
+        .page {
+            display: none;
+            padding: 18px 16px;
+            max-width: 650px;
+            margin: 0 auto;
+            animation: fade 0.3s;
+        }
+        .page.active { display: block; }
+        @keyframes fade { from { opacity: 0.3; } to { opacity: 1; } }
+
+        /* Общие элементы */
+        .ghost-moon {
+            font-size: 18vw;
+            text-align: center;
+            color: rgba(200, 40, 70, 0.06);
+            line-height: 0.7;
+            margin: 5px 0 -25px;
+            pointer-events: none;
+            user-select: none;
+            font-weight: 700;
+        }
+        h1 {
+            font-size: 3.2rem;
+            color: #d04060;
+            text-shadow: 0 0 15px #801830;
+            text-align: center;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        h2 {
+            color: #d04060;
+            text-align: center;
+            margin: 25px 0 20px;
+            font-size: 2.2rem;
+            font-weight: 600;
+            position: relative;
+        }
+        h2:before, h2:after {
+            content: "☾";
+            color: #902840;
+            margin: 0 12px;
+            font-size: 1.8rem;
+            opacity: 0.7;
+        }
+        h2:after { content: "☽"; }
+        .subtitle {
+            text-align: center;
+            color: #a07080;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+        .card {
+            background: rgba(12, 3, 6, 0.8);
+            backdrop-filter: blur(6px);
+            border: 1px solid #3a1420;
+            border-radius: 28px;
+            padding: 22px 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 18px 30px -12px #000;
+        }
+        .btn {
+            display: inline-block;
+            background: #801830;
+            color: #ffe8ee;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 60px;
+            font-size: 1rem;
+            box-shadow: 0 5px 0 #2a080f;
+            transition: 0.1s;
+            width: 100%;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            border-bottom: 2px solid #a02040;
+        }
+        .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #2a080f; }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #801830;
+            box-shadow: none;
+            color: #d8a0b0;
+        }
+        
+        /* Сетки и фото-заглушки */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .img-placeholder {
+            width: 100%;
+            height: 130px;
+            background: #14070c;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a06070;
+            border: 1px dashed #601828;
+            margin-bottom: 12px;
+            font-size: 2.5rem;
+        }
+        .img-placeholder-small {
+            height: 90px;
+            font-size: 1.8rem;
+        }
+        
+        /* Монетка */
+        .coin-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .coin {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30% 30%, #d4af37, #8a6e1c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 4px #2a080f, 0 10px 20px #000;
+            margin-bottom: 15px;
+            transition: transform 0.4s ease-out;
+            border: 2px solid #e0c060;
+        }
+        .coin span {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #1a0808;
+            text-shadow: 1px 1px 0 #ffd700;
+        }
+        .coin-result {
+            font-size: 3rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            color: #d4a0b0;
+            min-height: 4rem;
+        }
+        .spin {
+            animation: spinCoin 0.8s cubic-bezier(0.2, 0.9, 0.4, 1) forwards;
+        }
+        @keyframes spinCoin {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(720deg); }
+        }
+        
+        /* Форма */
+        .form-group {
+            margin-bottom: 18px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: #14070c;
+            border: 1px solid #501828;
+            border-radius: 30px;
+            color: #f0d8d8;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+        input::placeholder, textarea::placeholder { color: #805060; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 45px;
+            padding: 20px 0;
+            color: #704050;
+            font-size: 0.8rem;
+            border-top: 1px solid #2a1018;
+        }
+        .admin-link { color: #a04060; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<!-- ХЕДЕР С МЕНЮ (без эмодзи) -->
+<div class="header">
+    <div class="logo">Тени Луны</div>
+    <button class="menu-btn" id="menuToggle">Меню</button>
+</div>
+<div class="menu-panel" id="menuPanel">
+    <a data-page="home">Главная</a>
+    <a data-page="services">Услуги</a>
+    <a data-page="shop">Товары</a>
+    <a data-page="blog">Блог</a>
+    <a data-page="about">Обо мне</a>
+    <a data-page="contacts">Контакты</a>
+</div>
+
+<!-- СТРАНИЦА 1: ГЛАВНАЯ (Сторителлинг) -->
+<div id="home" class="page active">
+    <div class="ghost-moon">ТЕНИ</div>
+    <h1>Тени Луны</h1>
+    <div class="subtitle">проект по интеграции женской Тени</div>
+    
+    <div class="card" style="text-align: center;">
+        <p style="font-size: 1.2rem; margin-bottom: 10px;">☾</p>
+        <p>Исследуем глубины подсознания через Таро, ритуалы и работу с архетипами. Принимаем тёмные стороны, чтобы обрести целостность.</p>
+    </div>
+    
+    <h2>О чём проект</h2>
+    <div class="card">🌑 <strong>Исследуем</strong> — скрытые мотивы и теневые аспекты.</div>
+    <div class="card">🌒 <strong>Принимаем</strong> — страхи, злость, уязвимость как источник силы.</div>
+    <div class="card">🌓 <strong>Исцеляем</strong> — через лунные циклы и магию.</div>
+    
+    <h2>Путеводитель</h2>
+    <div class="grid-2">
+        <div class="card" style="padding: 18px; cursor: pointer;" data-page="services">
+            <div class="img-placeholder img-placeholder-small">☾</div>
+            <h3 style="margin:5px 0; color:#d87090;">Услуги</h3>
+            <p style="font-size:0.85rem;">Таро, чистки, ритуалы</p>
+        </div>
+        <div class="card" style="padding: 18px; cursor: pointer;" data-page="shop">
+            <div class="img-placeholder img-placeholder-small">☽</div>
+            <h3 style="margin:5px 0; color:#d87090;">Товары</h3>
+            <p style="font-size:0.85rem;">Свечи, амулеты, кристаллы</p>
+        </div>
+        <div class="card" style="padding: 18px; cursor: pointer;" data-page="blog">
+            <div class="img-placeholder img-placeholder-small">☾</div>
+            <h3 style="margin:5px 0; color:#d87090;">Блог</h3>
+            <p style="font-size:0.85rem;">Статьи о Луне и Тени</p>
+        </div>
+        <div class="card" style="padding: 18px; cursor: pointer;" data-page="about">
+            <div class="img-placeholder img-placeholder-small">☽</div>
+            <h3 style="margin:5px 0; color:#d87090;">Обо мне</h3>
+            <p style="font-size:0.85rem;">Путь Жрицы</p>
+        </div>
+    </div>
+    <p style="text-align:center; margin-top:15px; opacity:0.7;">☾ Выбери свой путь ☽</p>
+</div>
+
+<!-- СТРАНИЦА 2: УСЛУГИ -->
+<div id="services" class="page">
+    <h2>Услуги</h2>
+    <div class="card" style="text-align:center;">
+        <h3 style="margin-bottom:5px;">☾ Оракул Теней</h3>
+        <div id="predictionText" style="font-size:1.3rem; margin:15px 0; min-height:60px;">Нажми, чтобы узнать...</div>
+        <button class="btn" id="getPredictionBtn" style="margin-bottom:25px;">Получить послание</button>
+        
+        <h3 style="margin-bottom:5px;">☽ Монета Судьбы</h3>
+        <div class="coin-container">
+            <div class="coin" id="coinVisual"><span>☾</span></div>
+            <button class="btn btn-outline" id="flipCoinBtn">Подбросить</button>
+            <div id="coinResult" class="coin-result"></div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="img-placeholder">☾</div>
+        <h3>Расклад Таро</h3>
+        <p>Глубинный анализ ситуации.</p>
+        <button class="btn" onclick="alert('Свяжись со мной в Telegram: @eos_moon_shadows')">Записаться</button>
+    </div>
+    <div class="card">
+        <div class="img-placeholder">☽</div>
+        <h3>Лунная чистка</h3>
+        <p>Энергетическое очищение.</p>
+        <button class="btn" onclick="alert('Свяжись со мной в Telegram: @eos_moon_shadows')">Записаться</button>
+    </div>
+    <div class="card">
+        <div class="img-placeholder">☾</div>
+        <h3>Оракул года</h3>
+        <p>Большой годовой прогноз.</p>
+        <button class="btn" onclick="alert('Свяжись со мной в Telegram: @eos_moon_shadows')">Записаться</button>
+    </div>
+</div>
+
+<!-- СТРАНИЦА 3: ТОВАРЫ -->
+<div id="shop" class="page">
+    <h2>Товары</h2>
+    <div class="grid-2">
+        <div class="card" style="padding:14px;">
+            <div class="img-placeholder img-placeholder-small">☾</div>
+            <h3>Свеча Лунная</h3>
+            <p>Ручная работа.</p>
+            <button class="btn" onclick="alert('Для заказа пиши в Telegram: @eos_moon_shadows')">Купить</button>
+        </div>
+        <div class="card" style="padding:14px;">
+            <div class="img-placeholder img-placeholder-small">☽</div>
+            <h3>Кристалл Теней</h3>
+            <p>Чёрный обсидиан.</p>
+            <button class="btn" onclick="alert('Для заказа пиши в Telegram: @eos_moon_shadows')">Купить</button>
+        </div>
+        <div class="card" style="padding:14px;">
+            <div class="img-placeholder img-placeholder-small">☾</div>
+            <h3>Таро Теней</h3>
+            <p>Авторская колода.</p>
+            <button class="btn" onclick="alert('Для заказа пиши в Telegram: @eos_moon_shadows')">Купить</button>
+        </div>
+        <div class="card" style="padding:14px;">
+            <div class="img-placeholder img-placeholder-small">☽</div>
+            <h3>Амулет Луна</h3>
+            <p>Серебро, лунный камень.</p>
+            <button class="btn" onclick="alert('Для заказа пиши в Telegram: @eos_moon_shadows')">Купить</button>
+        </div>
+    </div>
+</div>
+
+<!-- СТРАНИЦА 4: БЛОГ -->
+<div id="blog" class="page">
+    <h2>Блог</h2>
+    <div class="card">
+        <div class="img-placeholder">☾</div>
+        <h3>Луна в Скорпионе</h3>
+        <p>Как пережить этот период.</p>
+        <button class="btn btn-outline" onclick="alert('Полная статья появится после подключения CMS')">Читать</button>
+    </div>
+    <div class="card">
+        <div class="img-placeholder">☽</div>
+        <h3>Магия свечей</h3>
+        <p>Ритуалы для дома.</p>
+        <button class="btn btn-outline" onclick="alert('Полная статья появится после подключения CMS')">Читать</button>
+    </div>
+</div>
+
+<!-- СТРАНИЦА 5: ОБО МНЕ -->
+<div id="about" class="page">
+    <h2>Эос</h2>
+    <div class="card" style="text-align:center;">
+        <div class="img-placeholder" style="height:200px; width:200px; margin:0 auto 20px; border-radius:50%;">☾</div>
+        <p><strong>Таролог, мистик, жрица тени.</strong></p>
+        <p>Я веду практику с 2018 года. Моя миссия — подсветить твои тёмные углы и найти там силу. Луна в Скорпионе — моё тотемное время.</p>
+        <p style="margin-top:20px;">✨ Сертифицированный мастер Таро<br>🌙 Ученица школы "Черная Луна"<br>🕸️ Автор блога "Тени Луны"</p>
+    </div>
+</div>
+
+<!-- СТРАНИЦА 6: КОНТАКТЫ + ФОРМА -->
+<div id="contacts" class="page">
+    <h2>Контакты</h2>
+    <div class="card">
+        <p style="font-size:1.2rem;">☾ Telegram: <strong>@eos_moon_shadows</strong></p>
+        <p style="margin-bottom:25px;">☽ Email: <strong>eos@moon-shadows.space</strong></p>
+        
+        <h3 style="margin-bottom:20px;">Или напишите мне здесь</h3>
+        <!-- Форма Netlify -->
+        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="contact">
+            <p style="display:none;"><input name="bot-field"></p>
+            <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required></div>
+            <div class="form-group"><input type="text" name="contact" placeholder="Telegram / Email" required></div>
+            <div class="form-group"><textarea name="message" rows="3" placeholder="Ваш вопрос..."></textarea></div>
+            <button type="submit" class="btn">Отправить</button>
+        </form>
+        <p style="margin-top:15px; font-size:0.8rem; opacity:0.7;">Я отвечу в течение 24 часов</p>
+    </div>
+</div>
+
+<!-- ФУТЕР (с формой и админкой) -->
+<div class="footer">
+    <p style="margin-bottom:20px;">☾ Остались вопросы? ☽</p>
+    <form name="contact-footer" method="POST" data-netlify="true" netlify-honeypot="bot-field" style="max-width:400px; margin:0 auto 20px;">
+        <input type="hidden" name="form-name" value="contact-footer">
+        <p style="display:none;"><input name="bot-field"></p>
+        <input type="text" name="contact" placeholder="Ваш Telegram / Email" style="margin-bottom:10px;" required>
+        <textarea name="message" rows="2" placeholder="Короткий вопрос..."></textarea>
+        <button type="submit" class="btn" style="margin-top:10px;">Отправить</button>
+    </form>
+    <p>© Тени Луны. Эос.<br>
+    <a href="/admin/" class="admin-link">Вход для хранителя</a></p>
+</div>
+
+<script>
+    (function(){
+        // Меню
+        const menuToggle = document.getElementById('menuToggle');
+        const menuPanel = document.getElementById('menuPanel');
+        const links = document.querySelectorAll('[data-page]');
+        const pages = {
+            home: document.getElementById('home'),
+            services: document.getElementById('services'),
+            shop: document.getElementById('shop'),
+            blog: document.getElementById('blog'),
+            about: document.getElementById('about'),
+            contacts: document.getElementById('contacts')
+        };
+        
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuPanel.style.display = menuPanel.style.display === 'flex' ? 'none' : 'flex';
+        });
+        
+        function switchPage(pageId) {
+            if (pages[pageId]) {
+                Object.values(pages).forEach(p => p.classList.remove('active'));
+                pages[pageId].classList.add('active');
+                menuPanel.style.display = 'none';
+            }
+        }
+        
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const pageId = link.getAttribute('data-page');
+                if (pageId) switchPage(pageId);
+            });
+        });
+        
+        document.querySelectorAll('[data-page]').forEach(el => {
+            if (!el.closest('.menu-panel')) {
+                el.addEventListener('click', function() {
+                    switchPage(this.getAttribute('data-page'));
+                });
+            }
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!menuPanel.contains(e.target) && e.target !== menuToggle) {
+                menuPanel.style.display = 'none';
+            }
+        });
+        
+        // Оракул
+        const predictions = [
+            "Сегодня твоя тень даст тебе силу, а не страх.",
+            "Луна в Скорпионе: не давай пустых обещаний.",
+            "Твоя интуиция — твой главный советник.",
+            "То, что скрыто, проявится к полуночи.",
+            "Жди знака от Вселенной через воду.",
+            "Деньги придут от женщины с тёмными волосами.",
+            "Не бойся сказать 'нет' — это магия.",
+            "Карта дня — Верховная Жрица.",
+            "Риск будет оправдан. Действуй.",
+            "Сегодня магия на твоей стороне."
+        ];
+        const predBtn = document.getElementById('getPredictionBtn');
+        const predText = document.getElementById('predictionText');
+        if(predBtn) predBtn.addEventListener('click', () => {
+            predText.textContent = predictions[Math.floor(Math.random() * predictions.length)];
+        });
+        
+        // Монетка с анимацией
+        const coinBtn = document.getElementById('flipCoinBtn');
+        const coinVisual = document.getElementById('coinVisual');
+        const coinRes = document.getElementById('coinResult');
+        if(coinBtn) coinBtn.addEventListener('click', () => {
+            coinVisual.classList.add('spin');
+            setTimeout(() => {
+                const res = Math.random() < 0.5 ? 'ДА' : 'НЕТ';
+                coinRes.textContent = res;
+                coinVisual.classList.remove('spin');
+            }, 400);
+        });
+
+        // Netlify CMS Redirect (для входа)
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    })();
+</script>
+<!-- Подключаем Netlify Identity (для входа в админку) -->
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+</body>
+</html>
