@@ -3,7 +3,7 @@ backend:
   repo: ТВОЙ_НИК/moon-shadows-cms
   branch: main
   base_url: https://moon-shadows.netlify.app
-  auth_endpoint: auth
+  auth_endpoint: /admin/auth
 
 media_folder: "images/uploads"
 public_folder: "/images/uploads"
