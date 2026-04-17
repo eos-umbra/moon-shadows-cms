@@ -1,0 +1,107 @@
+backend:
+  name: github
+  repo: eos-umbra/moon-shadows-cms
+  branch: main
+  base_url: https://moon-shadows.netlify.app
+  auth_endpoint: auth
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "settings"
+    label: "⚙️ Настройки сайта"
+    files:
+      - label: "Основные настройки"
+        name: "main"
+        file: "_data/settings.json"
+        fields:
+          - {label: "Название сайта", name: "site_title", widget: "string", default: "Тени Луны"}
+          - {label: "Подзаголовок", name: "subtitle", widget: "string", default: "проект по интеграции женской Тени"}
+          - {label: "Цвет кнопок", name: "button_color", widget: "color", default: "#801830"}
+          - {label: "Цвет акцента", name: "accent_color", widget: "color", default: "#c82848"}
+
+  - name: "home"
+    label: "🏠 Главная"
+    files:
+      - label: "Секции главной"
+        name: "home"
+        file: "_data/home.json"
+        fields:
+          - label: "Приветственный блок"
+            name: "hero"
+            widget: "object"
+            fields:
+              - {label: "Заголовок", name: "title", widget: "string", default: "Тени Луны"}
+              - {label: "Подзаголовок", name: "subtitle", widget: "string", default: "проект по интеграции женской Тени"}
+              - {label: "Текст", name: "text", widget: "text", default: "Исследуем глубины подсознания через Таро, ритуалы и работу с архетипами."}
+          - label: "Блок «О чём проект»"
+            name: "about_project"
+            widget: "list"
+            fields:
+              - {label: "Заголовок", name: "title", widget: "string"}
+              - {label: "Текст", name: "text", widget: "text"}
+
+  - name: "pages"
+    label: "📄 Страницы"
+    files:
+      - label: "Обо мне"
+        name: "about"
+        file: "_data/about.json"
+        fields:
+          - {label: "Имя", name: "name", widget: "string", default: "Эос"}
+          - {label: "Заголовок", name: "title", widget: "string", default: "Таролог, мистик, жрица тени"}
+          - {label: "Биография", name: "bio", widget: "text"}
+          - {label: "Достижения", name: "achievements", widget: "list", default: ["Сертифицированный мастер Таро", "Ученица школы «Черная Луна»", "Автор блога «Тени Луны»"]}
+          - {label: "Фото", name: "photo", widget: "image", required: false}
+      - label: "Контакты"
+        name: "contacts"
+        file: "_data/contacts.json"
+        fields:
+          - {label: "Telegram", name: "telegram", widget: "string", default: "@eos_moon_shadows"}
+          - {label: "Email", name: "email", widget: "string", default: "eos@moon-shadows.space"}
+          - {label: "Текст формы", name: "form_text", widget: "text", default: "Остались вопросы? Напиши мне!"}
+
+  - name: "services"
+    label: "🔮 Услуги"
+    folder: "_services"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Название", name: "title", widget: "string"}
+      - {label: "Описание", name: "description", widget: "text"}
+      - {label: "Цена", name: "price", widget: "string", required: false}
+      - {label: "Изображение", name: "image", widget: "image", required: false}
+      - {label: "Порядок", name: "order", widget: "number", value_type: "int", default: 1}
+
+  - name: "shop"
+    label: "🕯️ Товары"
+    folder: "_shop"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Название", name: "title", widget: "string"}
+      - {label: "Описание", name: "description", widget: "text"}
+      - {label: "Цена", name: "price", widget: "string"}
+      - {label: "Изображение", name: "image", widget: "image"}
+      - {label: "В наличии", name: "in_stock", widget: "boolean", default: true}
+
+  - name: "blog"
+    label: "📜 Блог"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "Заголовок", name: "title", widget: "string"}
+      - {label: "Дата", name: "date", widget: "datetime"}
+      - {label: "Текст", name: "body", widget: "markdown"}
+      - {label: "Изображение", name: "image", widget: "image", required: false}
+      - {label: "Теги", name: "tags", widget: "list", required: false}
+
+  - name: "predictions"
+    label: "🔮 Предсказания"
+    folder: "_predictions"
+    create: true
+    identifier_field: "text"
+    fields:
+      - {label: "Текст предсказания", name: "text", widget: "string"}
